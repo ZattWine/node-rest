@@ -1,3 +1,5 @@
+const path = require("path");
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -8,6 +10,7 @@ const app = express();
 
 // app.use(bodyParser.urlencoded({ extended: false })); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // CORS Problem solve
 app.use((req, res, next) => {
