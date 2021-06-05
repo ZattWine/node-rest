@@ -7,3 +7,19 @@ getButton.addEventListener("click", () => {
     .then((resData) => console.log(resData))
     .catch((err) => console.log(err));
 });
+
+createButton.addEventListener("click", () => {
+  fetch("http://localhost:8080/feed/post", {
+    method: "POST",
+    body: JSON.stringify({
+      title: "Post #1",
+      content: "This is a post #1",
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((resData) => console.log(resData))
+    .catch((err) => console.log(err));
+});
