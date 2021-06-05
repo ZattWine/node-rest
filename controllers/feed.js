@@ -6,19 +6,19 @@ const Post = require("../models/post");
  * GET posts from server.
  */
 exports.getPosts = (req, res, next) => {
-  res.status(200).json({
-    posts: [
-      {
-        title: "Post #1",
-        content: "This is the first - #1 post!",
-        imageUrl: "images/my_girl.jpg",
-        creator: {
-          name: "Zayar",
-        },
-        createdAt: new Date(),
-      },
-    ],
-  });
+  Post.find()
+    .then((posts) => {
+      res
+        .status(200)
+        .json({ message: "Fetched posts successfully.", posts: posts });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
+    });
 };
 
 /**
@@ -58,6 +58,31 @@ exports.createPost = (req, res, next) => {
         err.statusCode = 500;
       }
 
-      throw err;
+      next(err);
+    });
+};
+
+/**
+ * Get a single post.
+ */
+exports.getPost = (req, res, next) => {
+  const postId = req.params.postId;
+
+  Post.findById(postId)
+    .then((post) => {
+      if (!post) {
+        const error = new Error("Could not find a post.");
+        error.statusCode = 404;
+        throw err;
+      }
+
+      res.status(200).json({ message: "Post fetch.", post: post });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      next(err);
     });
 };
