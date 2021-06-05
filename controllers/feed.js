@@ -15,7 +15,7 @@ exports.getPosts = (req, res, next) => {
 /**
  * POST a post to server.
  */
-exports.postPost = (req, res, next) => {
+exports.createPost = (req, res, next) => {
   // create post in db
 
   const title = req.body.title;
