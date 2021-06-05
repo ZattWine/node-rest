@@ -1,0 +1,32 @@
+{
+  "name": "rest",
+  "version": "1.0.0",
+  "description": "REST APIs with NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZattWine/node-rest.git"
+  },
+  "author": "Kyaw Zayar Tun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZattWine/node-rest/issues"
+  },
+  "homepage": "https://github.com/ZattWine/node-rest#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.11.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.13",
+    "multer": "^1.4.2"
+  }
+}
