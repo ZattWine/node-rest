@@ -17,6 +17,7 @@ exports.getPosts = async (req, res, next) => {
   try {
     const totalItems = await Post.find().countDocuments();
     const posts = await Post.find()
+      .populate("creator")
       .skip((currentPage - 1) * perPage)
       .limit(perPage);
 
@@ -78,7 +79,10 @@ exports.createPost = async (req, res, next) => {
     await user.save();
 
     // socket.io
-    io.getIO().emit("posts", { action: "create", post: post });
+    io.getIO().emit("posts", {
+      action: "create",
+      post: { ...post._doc, creator: { _id: req.userId, name: user.name } },
+    });
 
     res.status(201).json({
       message: "Post created successfully.",
@@ -145,7 +149,7 @@ exports.updatePost = async (req, res, next) => {
   }
 
   try {
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate("creator");
     if (!post) {
       const error = new Error("Could not find a post.");
       error.statusCode = 404;
@@ -153,7 +157,7 @@ exports.updatePost = async (req, res, next) => {
     }
 
     // check post is created by current user?
-    if (post.creator.toString() !== req.userId) {
+    if (post.creator._id.toString() !== req.userId) {
       const error = new Error("Not authorized.");
       error.statusCode = 403;
       throw error;
@@ -167,6 +171,9 @@ exports.updatePost = async (req, res, next) => {
     post.content = content;
     post.imageUrl = imageUrl;
     const result = await post.save();
+
+    // socket
+    io.getIO().emit("posts", { action: "update", post: result });
 
     res.status(200).json({
       message: "Post updated.",
