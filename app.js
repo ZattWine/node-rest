@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
+const cors = require("cors");
 
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
@@ -31,27 +32,14 @@ const fileFilter = (req, file, callback) => {
   }
 };
 
+app.use(cors());
+
 // app.use(bodyParser.urlencoded({ extended: false })); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );
 app.use("/images", express.static(path.join(__dirname, "images")));
-
-// CORS Problem solve
-app.use((req, res, next) => {
-  // client
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  // http method
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "OPTIONS, GET, POST, PUT, PATCH, DELETE"
-  );
-  // headers
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  next();
-});
 
 // Routes
 app.use("/feed", feedRoutes);
@@ -74,7 +62,12 @@ mongoose
     { useUnifiedTopology: true, useNewUrlParser: true }
   )
   .then((result) => {
-    console.log("CONNECTED!");
-    app.listen(8080);
+    console.log("CONNECTED TO DATABASE!");
+
+    const server = app.listen(8080);
+    const io = require("./socket").init(server);
+    io.on("connection", (socket) => {
+      console.log(`Client connected`);
+    });
   })
   .catch((err) => console.log(err));
